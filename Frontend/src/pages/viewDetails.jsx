@@ -92,7 +92,7 @@ const BlogDetails = () => {
                 {/* CONTENT */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-10 mt-6">
 
-                    <p className="text-sm font-semibold text-purple-700 uppercase tracking-wider">
+                    <p className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
                         Blog
                     </p>
 
@@ -103,14 +103,14 @@ const BlogDetails = () => {
                     {/* AUTHOR */}
                     <div className="flex items-center gap-3 mt-6 pb-6 border-b border-slate-200">
 
-                        <div className="w-11 h-11 rounded-full bg-purple-900/50 text-white flex items-center justify-center font-semibold">
+                        <div className="w-11 h-11 rounded-full bg-slate-900/70 text-white flex items-center justify-center font-semibold">
                             {blog.author?.name
                                 ?.charAt(0)
                                 .toUpperCase()}
                         </div>
 
                         <div>
-                            <p className="font-semibold text-purple-700">
+                            <p className="font-semibold text-slate-700">
                                 {blog.author?.name || "Unknown Author"}
                             </p>
 

@@ -21,7 +21,7 @@ const UserD = () => {
 
       {/* Page Header */}
       <div className="mb-8">
-        <p className="text-purple-600 text-sm font-semibold uppercase tracking-wide">
+        <p className="text-slate-600 text-sm font-semibold uppercase tracking-wide">
           Student Dashboard
         </p>
 
@@ -42,12 +42,12 @@ const UserD = () => {
 
           <div className="flex items-start gap-4">
 
-            <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0">
               <Sparkles size={22} />
             </div>
 
             <div>
-              <p className="text-sm font-medium text-purple-600 mb-1">
+              <p className="text-sm font-medium text-slate-600 mb-1">
                 Student Portal
               </p>
 
@@ -66,7 +66,7 @@ const UserD = () => {
 
           <button
             onClick={() => navigate("/user/create-blog")}
-            className="flex items-center justify-center gap-2 bg-purple-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-purple-700 transition shadow-sm"
+            className="flex items-center justify-center gap-2 bg-slate-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-slate-700 transition shadow-sm"
           >
             <PenLine size={18} />
             Create Blog
@@ -98,7 +98,7 @@ const UserD = () => {
               </p>
             </div>
 
-            <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center">
               <FileText size={23} />
             </div>
 
@@ -179,17 +179,17 @@ const UserD = () => {
           {/* Create Blog */}
           <button
             onClick={() => navigate("/user/create-blog")}
-            className="bg-white border border-slate-200 rounded-2xl p-6 text-left hover:border-purple-300 hover:shadow-md transition group"
+            className="bg-white border border-slate-200 rounded-2xl p-6 text-left hover:border-slate-300 hover:shadow-md transition group"
           >
             <div className="flex items-center justify-between mb-6">
 
-              <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center">
                 <PenLine size={23} />
               </div>
 
               <ArrowRight
                 size={20}
-                className="text-slate-400 group-hover:text-purple-600 group-hover:translate-x-1 transition"
+                className="text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition"
               />
 
             </div>
@@ -270,7 +270,7 @@ const UserD = () => {
 
           <div className="flex items-center gap-4">
 
-            <div className="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg">
+            <div className="w-12 h-12 rounded-full bg-slate-50 text-slate-600 flex items-center justify-center font-bold text-lg">
               {user?.name?.charAt(0).toUpperCase()}
             </div>
 

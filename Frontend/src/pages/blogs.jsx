@@ -31,7 +31,7 @@ const Blogs = () => {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-slate-300 border-t-purple-700 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-10 h-10 border-4 border-slate-300 border-t-slate-700 rounded-full animate-spin mx-auto mb-4"></div>
 
           <p className="text-slate-500">
             Loading blogs...
@@ -48,7 +48,7 @@ const Blogs = () => {
       <div className="bg-white border-b border-purple-100">
         <div className="max-w-6xl mx-auto px-6 py-10">
 
-          <p className="text-purple-700 text-sm font-semibold tracking-widest mb-2">
+          <p className="text-slate-700 text-sm font-semibold tracking-widest mb-2">
             COMMUNITY BLOGS
           </p>
 
@@ -116,7 +116,7 @@ const Blogs = () => {
                 {/* CONTENT */}
                 <div className="p-6 flex flex-col flex-1">
 
-                  <p className="text-xs font-semibold text-purple-700 uppercase tracking-wider mb-3">
+                  <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-3">
                     Blog
                   </p>
 
@@ -135,7 +135,7 @@ const Blogs = () => {
                         state: { from: "/blogs" },
                       })
                     }
-                    className="mt-5 w-full py-2.5 rounded-lg bg-white/20 text-purple-700 border-2 border-purple-700 font-semibold hover:bg-purple-50 transition"
+                    className="mt-5 w-full py-2.5 rounded-lg bg-white/20 text-slate-700 border-2 border-slate-700 font-semibold hover:bg-slate-50 transition"
                   >
                     View Details
                   </button>
@@ -143,7 +143,7 @@ const Blogs = () => {
                   {/* AUTHOR */}
                   <div className="flex items-center gap-3  pt-5 border-t border-slate-100 mt-6">
 
-                    <div className="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-semibold shrink-0">
                       {blog.author?.name
                         ?.charAt(0)
                         .toUpperCase() || "U"}
@@ -151,7 +151,7 @@ const Blogs = () => {
 
                     <div className="min-w-0">
 
-                      <p className="text-sm font-semibold text-purple-700 truncate">
+                      <p className="text-sm font-semibold text-slate-900 truncate">
                         {blog.author?.name || "Unknown Author"}
                       </p>
 

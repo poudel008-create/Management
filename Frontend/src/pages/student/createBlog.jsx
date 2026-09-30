@@ -50,7 +50,7 @@ const CreateBlog = () => {
         <button
           type="button"
           onClick={() => navigate("/user")}
-          className="flex items-center gap-2 text-sm text-slate-500 hover:text-purple-600 transition mb-5"
+          className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-600 transition mb-5"
         >
           <ArrowLeft size={17} />
           Back to Dashboard
@@ -58,12 +58,12 @@ const CreateBlog = () => {
 
         <div className="flex items-start gap-4">
 
-          <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0">
             <PenLine size={23} />
           </div>
 
           <div>
-            <p className="text-sm font-semibold tracking-wide text-purple-600 uppercase">
+            <p className="text-sm font-semibold tracking-wide text-slate-600 uppercase">
               Blog Editor
             </p>
 
@@ -84,16 +84,16 @@ const CreateBlog = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
         {/* Card Header */}
-        <div className="bg-purple-200 px-6 sm:px-8 py-6">
+        <div className="bg-slate-50  px-6 sm:px-8 py-6">
 
           <div className="flex items-center gap-3">
 
-            <div className="w-10 h-10 rounded-lg bg-purple-800/70 text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-slate-800/70 text-white flex items-center justify-center">
               <FileText size={20} />
             </div>
 
             <div>
-              <h2 className="text-purple-800 text-lg font-semibold">
+              <h2 className="text-slate-800 text-lg font-semibold">
                 Write Something Interesting
               </h2>
 
@@ -121,7 +121,7 @@ const CreateBlog = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter your blog title..."
-              className="w-full text-xl sm:text-2xl font-semibold text-slate-800 placeholder:text-slate-300 border-b-2 border-slate-200 focus:border-purple-600 outline-none pb-4 transition"
+              className="w-full text-xl sm:text-2xl font-semibold text-slate-800 placeholder:text-slate-300 border-b-2 border-slate-200 focus:border-slate-600 outline-none pb-4 transition"
               required
             />
 
@@ -137,9 +137,9 @@ const CreateBlog = () => {
 
             <label className="block cursor-pointer">
 
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-purple-400 hover:bg-purple-50/40 transition">
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-slate-400 hover:bg-slate-50/40 transition">
 
-                <div className="w-12 h-12 mx-auto rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+                <div className="w-12 h-12 mx-auto rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center mb-3">
                   <Image size={23} />
                 </div>
 
@@ -181,7 +181,7 @@ const CreateBlog = () => {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Start writing your blog here..."
               rows={14}
-              className="w-full resize-none text-slate-700 leading-7 placeholder:text-slate-300 border border-slate-200 rounded-xl p-5 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 outline-none transition"
+              className="w-full resize-none text-slate-700 leading-7 placeholder:text-slate-300 border border-slate-200 rounded-xl p-5 focus:border-slate-500 focus:ring-2 focus:ring-slate-100 outline-none transition"
               required
             />
 
@@ -201,7 +201,7 @@ const CreateBlog = () => {
 
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 shadow-sm transition"
+              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-slate-700 text-white font-semibold hover:bg-slate-800 shadow-sm transition"
             >
               <PenLine size={18} />
               Publish Blog
