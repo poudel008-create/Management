@@ -3,6 +3,8 @@ import { getBlogs } from "../services/blogService";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
+import { BookOpen, ArrowRight, ImageOff } from "lucide-react";
+
 const Blogs = () => {
   const navigate = useNavigate();
   const { token } = useAuth();
@@ -27,11 +29,17 @@ const Blogs = () => {
     fetchBlogs();
   }, [token]);
 
+  const openBlog = (id) => {
+    navigate(`/blogs/${id}`, {
+      state: { from: "/blogs" },
+    });
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+      <div className="flex items-center justify-center py-24">
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-slate-300 border-t-slate-700 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-10 h-10 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
 
           <p className="text-slate-500">
             Loading blogs...
@@ -42,138 +50,130 @@ const Blogs = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="max-w-7xl mx-auto">
 
-      {/* HEADER */}
-      <div className="bg-white border-b border-purple-100">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-indigo-600 text-sm font-semibold uppercase tracking-wide">
+          Community Blogs
+        </p>
 
-          <p className="text-slate-700 text-sm font-semibold tracking-widest mb-2">
-            COMMUNITY BLOGS
-          </p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 mt-2">
+          Explore Our Blogs
+        </h1>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-800">
-            Explore Our Blogs
-          </h1>
+        <p className="text-slate-500 mt-2 max-w-2xl">
+          Discover ideas, knowledge and experiences shared by
+          our students and teachers.
+        </p>
+      </div>
 
-          <p className="text-slate-500 mt-3 max-w-2xl leading-6">
-            Discover ideas, knowledge and experiences shared by
-            our students and teachers.
+
+      {/* Blogs */}
+      {blogs.length === 0 ? (
+
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
+
+          <div className="w-14 h-14 mx-auto rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <BookOpen size={26} />
+          </div>
+
+          <h2 className="text-xl font-semibold text-slate-800 mt-5">
+            No blogs yet
+          </h2>
+
+          <p className="text-slate-500 mt-2">
+            Be the first one to share something interesting.
           </p>
 
         </div>
-      </div>
 
-      {/* BLOGS */}
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      ) : (
 
-        {blogs.length === 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
+          {blogs.map((blog) => (
 
-            <h2 className="text-xl font-semibold text-purple-800">
-              No blogs yet
-            </h2>
+            <article
+              key={blog._id}
+              onClick={() => openBlog(blog._id)}
+              className="group bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md transition cursor-pointer flex flex-col"
+            >
 
-            <p className="text-slate-500 mt-2">
-              Be the first one to share something interesting.
-            </p>
+              {/* Image */}
+              <div className="h-40 bg-slate-100 overflow-hidden shrink-0">
 
-          </div>
+                {blog.image ? (
 
-        ) : (
+                  <img
+                    src={blog.image}
+                    alt={blog.title}
+                    className="w-full h-full object-cover"
+                  />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+                ) : (
 
-            {blogs.map((blog) => (
+                  <div className="h-full flex flex-col items-center justify-center text-slate-300">
+                    <ImageOff size={26} />
+                    <span className="text-xs mt-1.5">
+                      No image
+                    </span>
+                  </div>
 
-              <article
-                key={blog._id}
-                className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition duration-300 flex flex-col"
-              >
+                )}
 
-                {/* IMAGE */}
-                <div className="h-52 bg-slate-200 overflow-hidden shrink-0">
+              </div>
 
-                  {blog.image ? (
 
-                    <img
-                      src={blog.image}
-                      alt={blog.title}
-                      className="w-full h-full object-cover"
-                    />
+              {/* Content */}
+              <div className="p-4 flex flex-col flex-1">
 
-                  ) : (
+                <h2 className="text-lg font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-indigo-600 transition">
+                  {blog.title}
+                </h2>
 
-                    <div className="h-full flex items-center justify-center text-slate-400">
-                      No Image
-                    </div>
+                <p className="text-sm text-slate-500 mt-1.5 leading-5 line-clamp-2">
+                  {blog.content}
+                </p>
 
-                  )}
 
-                </div>
+                {/* Footer */}
+                <div className="flex items-center justify-between gap-3 mt-auto pt-4">
 
-                {/* CONTENT */}
-                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 min-w-0">
 
-                  <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-3">
-                    Blog
-                  </p>
-
-                  <h2 className="text-xl font-bold text-slate-800 line-clamp-2 min-h-14">
-                    {blog.title}
-                  </h2>
-
-                  <p className="text-slate-600 mt-3 leading-6 line-clamp-3 min-h-18">
-                    {blog.content}
-                  </p>
-
-                  {/* VIEW DETAILS */}
-                  <button
-                    onClick={() =>
-                      navigate(`/blogs/${blog._id}`, {
-                        state: { from: "/blogs" },
-                      })
-                    }
-                    className="mt-5 w-full py-2.5 rounded-lg bg-white/20 text-slate-700 border-2 border-slate-700 font-semibold hover:bg-slate-50 transition"
-                  >
-                    View Details
-                  </button>
-
-                  {/* AUTHOR */}
-                  <div className="flex items-center gap-3  pt-5 border-t border-slate-100 mt-6">
-
-                    <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-semibold shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
                       {blog.author?.name
                         ?.charAt(0)
                         .toUpperCase() || "U"}
                     </div>
 
-                    <div className="min-w-0">
-
-                      <p className="text-sm font-semibold text-slate-900 truncate">
-                        {blog.author?.name || "Unknown Author"}
-                      </p>
-
-                      <p className="text-xs text-slate-400">
-                        Blog Author
-                      </p>
-
-                    </div>
+                    <p className="text-xs font-medium text-slate-600 truncate">
+                      {blog.author?.name || "Unknown Author"}
+                    </p>
 
                   </div>
 
+
+                  <span className="flex items-center gap-1 text-xs font-semibold text-indigo-600 shrink-0">
+                    View details
+                    <ArrowRight
+                      size={14}
+                      className="group-hover:translate-x-0.5 transition"
+                    />
+                  </span>
+
                 </div>
 
-              </article>
+              </div>
 
-            ))}
+            </article>
 
-          </div>
+          ))}
 
-        )}
+        </div>
 
-      </div>
+      )}
 
     </div>
   );

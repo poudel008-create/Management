@@ -43,6 +43,11 @@ const Sidebar = ({ isOpen, onClose }) => {
         path: "/blogs",
         icon: BookOpen,
       },
+            {
+        name: "Profile",
+        path: "/admin/profile",
+        icon: User,
+      },
     ],
 
     teacher: [

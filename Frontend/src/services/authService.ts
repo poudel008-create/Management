@@ -12,6 +12,16 @@ interface UserRole {
   token: string;
 }
 
+interface ProfileData {
+  name: string;
+  email: string;
+}
+
+interface PasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export const registerUser = async (userData: UserData) => {
   const response = await api.post("/auth/register", userData);
   return response.data;
@@ -67,6 +77,45 @@ export const updateUserRole = async ({
       },
     }
   );
+
+  return response.data;
+};
+
+// NEW: edit own name / email
+export const updateProfile = async (
+  profileData: ProfileData,
+  token: string
+) => {
+  const response = await api.put("/auth/profile", profileData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+// NEW: change own password
+export const changePassword = async (
+  passwordData: PasswordData,
+  token: string
+) => {
+  const response = await api.put("/auth/change-password", passwordData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+// NEW: list of all students (for teachers and admins)
+export const getStudents = async (token: string) => {
+  const response = await api.get("/auth/students", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return response.data;
 };

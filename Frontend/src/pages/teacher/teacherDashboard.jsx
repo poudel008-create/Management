@@ -53,7 +53,7 @@ const TeacherD = () => {
 
       {/* Header */}
       <div className="mb-8">
-        <p className="text-emerald-600 text-sm font-semibold uppercase tracking-wide">
+        <p className="text-indigo-600 text-sm font-semibold uppercase tracking-wide">
           Teacher Dashboard
         </p>
 
@@ -88,7 +88,7 @@ const TeacherD = () => {
               </p>
             </div>
 
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <BookOpen size={24} />
             </div>
 
@@ -97,7 +97,10 @@ const TeacherD = () => {
 
 
         {/* Student Contributors */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div
+          onClick={() => navigate("/teacher/students")}
+          className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-indigo-300 hover:shadow-md transition cursor-pointer"
+        >
           <div className="flex items-center justify-between">
 
             <div>
@@ -114,7 +117,7 @@ const TeacherD = () => {
               </p>
             </div>
 
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <Users size={24} />
             </div>
 
@@ -148,7 +151,7 @@ const TeacherD = () => {
               </p>
             </div>
 
-            <div className="w-12 h-12 shrink-0 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+            <div className="w-12 h-12 shrink-0 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <Clock size={24} />
             </div>
 
@@ -177,7 +180,7 @@ const TeacherD = () => {
 
             <button
               onClick={() => navigate("/blogs")}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition"
             >
               View All Blogs
               <ArrowRight size={17} />
@@ -220,7 +223,7 @@ const TeacherD = () => {
                 {/* Blog Info */}
                 <div className="flex items-start gap-4 min-w-0">
 
-                  <div className="w-11 h-11 shrink-0 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <div className="w-11 h-11 shrink-0 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                     <FileText size={20} />
                   </div>
 
@@ -261,7 +264,7 @@ const TeacherD = () => {
                       state: { from: "/teacher" },
                     })
                   }
-                  className="self-start sm:self-auto flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition"
+                  className="self-start sm:self-auto flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition"
                 >
                   View
                   <ArrowRight size={16} />
@@ -292,13 +295,13 @@ const TeacherD = () => {
           {/* View Blogs */}
           <button
             onClick={() => navigate("/blogs")}
-            className="bg-white border border-slate-200 rounded-2xl p-5 text-left hover:border-emerald-300 hover:shadow-sm transition group"
+            className="bg-white border border-slate-200 rounded-2xl p-5 text-left hover:border-indigo-300 hover:shadow-sm transition group"
           >
             <div className="flex items-center justify-between">
 
               <div className="flex items-center gap-4">
 
-                <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <BookOpen size={21} />
                 </div>
 
@@ -316,7 +319,7 @@ const TeacherD = () => {
 
               <ArrowRight
                 size={19}
-                className="text-slate-400 group-hover:text-emerald-600 transition"
+                className="text-slate-400 group-hover:text-indigo-600 transition"
               />
 
             </div>
@@ -326,13 +329,13 @@ const TeacherD = () => {
           {/* Profile */}
           <button
             onClick={() => navigate("/teacher/profile")}
-            className="bg-white border border-slate-200 rounded-2xl p-5 text-left hover:border-emerald-300 hover:shadow-sm transition group"
+            className="bg-white border border-slate-200 rounded-2xl p-5 text-left hover:border-indigo-300 hover:shadow-sm transition group"
           >
             <div className="flex items-center justify-between">
 
               <div className="flex items-center gap-4">
 
-                <div className="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <User size={21} />
                 </div>
 
@@ -350,7 +353,7 @@ const TeacherD = () => {
 
               <ArrowRight
                 size={19}
-                className="text-slate-400 group-hover:text-emerald-600 transition"
+                className="text-slate-400 group-hover:text-indigo-600 transition"
               />
 
             </div>

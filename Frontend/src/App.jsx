@@ -19,7 +19,7 @@ import BlogDetails from "./pages/viewDetails";
 import UsersDetails from "./pages/admin/usersDetails";
 import ManageRoles from "./pages/admin/manageRoles";
 import TeacherProfile from "./pages/teacher/teacherProfile";
-
+import AdminProfile from "./pages/admin/adminP";
 import ProtectedRoute from "./context/protectedRoutes";
 import DashboardLayout from "./layouts/DashboardLayout";
 
@@ -55,6 +55,7 @@ const App = () => {
             <Route path="users" element={<UsersDetails />} />
             <Route path="roles" element={<ManageRoles />} />
             <Route path="blogs" element={<Blogs />} />
+            <Route path="profile" element={<AdminProfile />} />
 
           </Route>
 
@@ -106,7 +107,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-
+              
           <Route
             path="/blogs/:id"
             element={
@@ -117,8 +118,8 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-
-        </Route>
+ </Route>
+        
 
       </Routes>
     </BrowserRouter>

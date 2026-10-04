@@ -21,7 +21,7 @@ const UserD = () => {
 
       {/* Page Header */}
       <div className="mb-8">
-        <p className="text-slate-600 text-sm font-semibold uppercase tracking-wide">
+        <p className="text-indigo-600 text-sm font-semibold uppercase tracking-wide">
           Student Dashboard
         </p>
 
@@ -42,12 +42,12 @@ const UserD = () => {
 
           <div className="flex items-start gap-4">
 
-            <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
               <Sparkles size={22} />
             </div>
 
             <div>
-              <p className="text-sm font-medium text-slate-600 mb-1">
+              <p className="text-sm font-medium text-indigo-600 mb-1">
                 Student Portal
               </p>
 
@@ -65,8 +65,8 @@ const UserD = () => {
 
 
           <button
-            onClick={() => navigate("/user/create-blog")}
-            className="flex items-center justify-center gap-2 bg-slate-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-slate-700 transition shadow-sm"
+            onClick={() => navigate("/user/create-blog",{state:{from:"/user"}})}
+            className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition shadow-sm shadow-indigo-600/20"
           >
             <PenLine size={18} />
             Create Blog
@@ -98,7 +98,7 @@ const UserD = () => {
               </p>
             </div>
 
-            <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <FileText size={23} />
             </div>
 
@@ -132,7 +132,7 @@ const UserD = () => {
         </div>
 
 
-        {/* Account */}
+        {/* Account (green = status, the only non-indigo accent) */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between">
 
@@ -179,17 +179,17 @@ const UserD = () => {
           {/* Create Blog */}
           <button
             onClick={() => navigate("/user/create-blog")}
-            className="bg-white border border-slate-200 rounded-2xl p-6 text-left hover:border-slate-300 hover:shadow-md transition group"
+            className="bg-white border border-slate-200 rounded-2xl p-6 text-left hover:border-indigo-300 hover:shadow-md transition group"
           >
             <div className="flex items-center justify-between mb-6">
 
-              <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <PenLine size={23} />
               </div>
 
               <ArrowRight
                 size={20}
-                className="text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition"
+                className="text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition"
               />
 
             </div>
@@ -235,17 +235,17 @@ const UserD = () => {
           {/* Explore Blogs */}
           <button
             onClick={() => navigate("/blogs")}
-            className="bg-white border border-slate-200 rounded-2xl p-6 text-left hover:border-blue-300 hover:shadow-md transition group"
+            className="bg-white border border-slate-200 rounded-2xl p-6 text-left hover:border-indigo-300 hover:shadow-md transition group"
           >
             <div className="flex items-center justify-between mb-6">
 
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <BookOpen size={23} />
               </div>
 
               <ArrowRight
                 size={20}
-                className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition"
+                className="text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition"
               />
 
             </div>
@@ -270,7 +270,7 @@ const UserD = () => {
 
           <div className="flex items-center gap-4">
 
-            <div className="w-12 h-12 rounded-full bg-slate-50 text-slate-600 flex items-center justify-center font-bold text-lg">
+            <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg">
               {user?.name?.charAt(0).toUpperCase()}
             </div>
 
@@ -289,7 +289,7 @@ const UserD = () => {
 
           <button
             onClick={() => navigate("/user/profile")}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition"
           >
             <User size={17} />
             View Profile

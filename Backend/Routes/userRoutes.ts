@@ -11,6 +11,10 @@ import {
   refreshAccessToken,
   getAllUsers,
   updateUserRole,
+  updateProfile,
+  changePassword,
+  getStudents
+  
 } from "../Controller/authController.js";
 
 const router = express.Router();
@@ -42,5 +46,8 @@ router.put(
   authorizeRoles("admin"),
   updateUserRole
 );
+router.put("/profile", authMiddleware, updateProfile);
+router.put("/change-password", authMiddleware, changePassword);
 
+router.get("/students", authMiddleware, authorizeRoles("teacher", "admin"), getStudents);
 export default router;

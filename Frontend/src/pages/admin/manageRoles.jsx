@@ -1,14 +1,15 @@
-
 import React, { useEffect, useState } from "react";
 import {
-  ShieldCheck,
-  User,
-  GraduationCap,
   Search,
   RefreshCw,
+  GraduationCap,
+  UserCog,
+  ArrowRight,
+  ArrowLeft,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "../../context/authContext";
-import { getAllUsers,updateUserRole } from "../../services/authService";
+import { getAllUsers, updateUserRole } from "../../services/authService";
 
 const ManageRoles = () => {
   const { token } = useAuth();
@@ -42,13 +43,11 @@ const ManageRoles = () => {
     try {
       setUpdatingId(userId);
 
-      await updateUserRole(userId, role, token);
+      await updateUserRole({userId, role, token});
 
       setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === userId
-            ? { ...user, role }
-            : user
+        prevUsers.map((u) =>
+          u._id === userId ? { ...u, role } : u
         )
       );
     } catch (error) {
@@ -58,33 +57,92 @@ const ManageRoles = () => {
     }
   };
 
-  const filteredUsers = users.filter((user) => {
+  const matchesSearch = (u) => {
     const value = search.toLowerCase();
 
     return (
-      user.name?.toLowerCase().includes(value) ||
-      user.email?.toLowerCase().includes(value)
+      u.name?.toLowerCase().includes(value) ||
+      u.email?.toLowerCase().includes(value)
     );
-  });
-
-  const getRoleStyle = (role) => {
-    if (role === "teacher") {
-      return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    }
-
-    if (role === "student") {
-      return "bg-purple-50 text-purple-700 border-purple-200";
-    }
-
-    return "bg-blue-50 text-blue-700 border-blue-200";
   };
+
+  const students = users.filter(
+    (u) => u.role === "student" && matchesSearch(u)
+  );
+
+  const teachers = users.filter(
+    (u) => u.role === "teacher" && matchesSearch(u)
+  );
+
+  const adminCount = users.filter((u) => u.role === "admin").length;
+
+  const renderRow = (u, targetRole) => {
+    const promoting = targetRole === "teacher";
+
+    return (
+      <div
+        key={u._id}
+        className="flex items-center justify-between gap-3 px-5 py-3.5 border-t border-slate-100"
+      >
+
+        <div className="flex items-center gap-3 min-w-0">
+
+          <div className="w-9 h-9 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold shrink-0">
+            {u.name?.charAt(0).toUpperCase()}
+          </div>
+
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-slate-800 truncate">
+              {u.name}
+            </p>
+
+            <p className="text-xs text-slate-400 truncate">
+              {u.email}
+            </p>
+          </div>
+
+        </div>
+
+        <button
+          onClick={() => handleRoleChange(u._id, targetRole)}
+          disabled={updatingId === u._id}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition disabled:opacity-60 ${
+            promoting
+              ? "bg-indigo-600 text-white hover:bg-indigo-700"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+          }`}
+        >
+          {updatingId === u._id ? (
+            "Updating..."
+          ) : promoting ? (
+            <>
+              Make teacher
+              <ArrowRight size={14} />
+            </>
+          ) : (
+            <>
+              <ArrowLeft size={14} />
+              Make student
+            </>
+          )}
+        </button>
+
+      </div>
+    );
+  };
+
+  const emptyRow = (text) => (
+    <p className="px-5 py-8 border-t border-slate-100 text-center text-sm text-slate-400">
+      {loading ? "Loading..." : text}
+    </p>
+  );
 
   return (
     <div className="max-w-7xl mx-auto">
 
       {/* Header */}
       <div className="mb-8">
-        <p className="text-blue-600 text-sm font-semibold uppercase tracking-wide">
+        <p className="text-indigo-600 text-sm font-semibold uppercase tracking-wide">
           Admin Panel
         </p>
 
@@ -93,189 +151,126 @@ const ManageRoles = () => {
         </h1>
 
         <p className="text-slate-500 mt-2">
-          Manage user roles and control access to different dashboards.
+          Move people between roles. Changes apply right away.
         </p>
       </div>
 
-      {/* Top Actions */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 mb-6">
 
-        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+      {/* Search + Refresh */}
+      <div className="flex gap-3 mb-6">
 
-          {/* Search */}
-          <div className="relative w-full sm:max-w-md">
+        <div className="relative flex-1 sm:max-w-md">
+          <Search
+            size={17}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          />
 
-            <Search
-              size={19}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
+          <input
+            type="text"
+            placeholder="Search name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 bg-white text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition"
+          />
+        </div>
 
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+        <button
+          onClick={fetchUsers}
+          disabled={loading}
+          className="flex items-center justify-center w-11 rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 transition disabled:opacity-60"
+          aria-label="Refresh"
+        >
+          <RefreshCw
+            size={17}
+            className={loading ? "animate-spin" : ""}
+          />
+        </button>
+
+      </div>
+
+
+      {/* Board */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        {/* Students */}
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+
+          <div className="flex items-center justify-between p-5">
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <GraduationCap size={21} />
+              </div>
+
+              <div>
+                <h2 className="font-bold text-slate-800">
+                  Students
+                </h2>
+
+                <p className="text-xs text-slate-400">
+                  Can write and manage blogs
+                </p>
+              </div>
+            </div>
+
+            <span className="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold">
+              {students.length}
+            </span>
 
           </div>
 
-          {/* Refresh */}
-          <button
-            onClick={fetchUsers}
-            disabled={loading}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-60"
-          >
-            <RefreshCw
-              size={17}
-              className={loading ? "animate-spin" : ""}
-            />
+          {students.length === 0
+            ? emptyRow("No students found.")
+            : students.map((u) => renderRow(u, "teacher"))}
 
-            Refresh
-          </button>
+        </div>
+
+
+        {/* Teachers */}
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+
+          <div className="flex items-center justify-between p-5">
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
+                <UserCog size={21} />
+              </div>
+
+              <div>
+                <h2 className="font-bold text-slate-800">
+                  Teachers
+                </h2>
+
+                <p className="text-xs text-slate-400">
+                  Can view all student blogs
+                </p>
+              </div>
+            </div>
+
+            <span className="px-2.5 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold">
+              {teachers.length}
+            </span>
+
+          </div>
+
+          {teachers.length === 0
+            ? emptyRow("No teachers found.")
+            : teachers.map((u) => renderRow(u, "student"))}
 
         </div>
 
       </div>
 
-      {/* Users */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
 
-        {/* Table Header */}
-        <div className="hidden md:grid grid-cols-[1fr_1.5fr_180px_120px] gap-4 px-6 py-4 bg-slate-50 border-b border-slate-200 text-sm font-semibold text-slate-600">
-          <span>User</span>
-          <span>Email</span>
-          <span>Current Role</span>
-          <span>Action</span>
-        </div>
+      {/* Admin note */}
+      <div className="flex items-center gap-3 mt-6 p-4 rounded-xl bg-slate-100 text-sm text-slate-600">
+        <ShieldCheck size={18} className="text-slate-500 shrink-0" />
 
-        {loading ? (
-
-          <div className="p-12 text-center text-slate-500">
-            Loading users...
-          </div>
-
-        ) : filteredUsers.length === 0 ? (
-
-          <div className="p-12 text-center">
-
-            <div className="w-14 h-14 mx-auto rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">
-              <User size={26} />
-            </div>
-
-            <h3 className="font-semibold text-slate-700 mt-4">
-              No users found
-            </h3>
-
-            <p className="text-sm text-slate-400 mt-1">
-              Try searching with a different name or email.
-            </p>
-
-          </div>
-
-        ) : (
-
-          <div>
-
-            {filteredUsers.map((user) => (
-
-              <div
-                key={user._id}
-                className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_180px_120px] gap-4 items-center px-6 py-5 border-b border-slate-100 last:border-b-0"
-              >
-
-                {/* User */}
-                <div className="flex items-center gap-3">
-
-                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                    <User size={20} />
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="font-semibold text-slate-800 truncate">
-                      {user.name}
-                    </p>
-
-                    <p className="text-xs text-slate-400 md:hidden truncate">
-                      {user.email}
-                    </p>
-                  </div>
-
-                </div>
-
-                {/* Email */}
-                <p className="hidden md:block text-sm text-slate-500 truncate">
-                  {user.email}
-                </p>
-
-                {/* Role */}
-                <div>
-
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold capitalize ${getRoleStyle(
-                      user.role
-                    )}`}
-                  >
-
-                    {user.role === "teacher" ? (
-                      <GraduationCap size={14} />
-                    ) : user.role === "student" ? (
-                      <User size={14} />
-                    ) : (
-                      <ShieldCheck size={14} />
-                    )}
-
-                    {user.role}
-
-                  </span>
-
-                </div>
-
-                {/* Action */}
-                <div>
-
-                  {user.role === "admin" ? (
-
-                    <span className="text-xs font-semibold text-slate-400">
-                      Protected
-                    </span>
-
-                  ) : (
-
-                    <select
-                      value={user.role}
-                      disabled={updatingId === user._id}
-                      onChange={(e) =>
-                        handleRoleChange(
-                          user._id,
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:opacity-60"
-                    >
-
-                      <option value="student">
-                        Student
-                      </option>
-
-                      <option value="teacher">
-                        Teacher
-                      </option>
-
-                    </select>
-
-                  )}
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        )}
-
+        {loading
+          ? "Loading..."
+          : `${adminCount} admin account${
+              adminCount !== 1 ? "s are" : " is"
+            } protected and can't be changed here.`}
       </div>
 
     </div>

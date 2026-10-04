@@ -164,18 +164,11 @@ export const getProfile = async (
 };
 
 
-export const getAllUsers = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.find({
-      role: { $ne: "admin" },
-    }).select("-password");
+    const users = await User.find().select("-password");
 
-    res.status(200).json({
-      users,
-    });
+    res.status(200).json({ users });
   } catch (error) {
     res.status(500).json({
       message: error instanceof Error ? error.message : "Unknown error",
@@ -246,6 +239,11 @@ export const updateUserRole = async (
         message: "User not found",
       });
     }
+        if (user.role === "admin") {          
+      return res.status(403).json({
+        message: "Admin role cannot be changed",
+      });
+    }
 
     if (!["student", "teacher"].includes(role)) {
       return res.status(400).json({
@@ -271,6 +269,97 @@ export const updateUserRole = async (
     res.status(500).json({
       message: "Failed to update role",
       error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const { name, email } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name.trim();
+
+    if (email && email !== user.email) {
+      const exists = await User.findOne({ email });
+
+      if (exists) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
+      user.email = email;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+        
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const match = await bcrypt.compare(currentPassword, user.password);
+
+    if (!match) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+
+// controller
+export const getStudents = async (req: Request, res: Response) => {
+  try {
+    const students = await User.find({ role: "student" })
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ students });
+  } catch (error) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };

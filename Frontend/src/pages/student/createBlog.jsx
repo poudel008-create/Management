@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation} from "react-router-dom";
 import { createBlog } from "../../services/blogService";
 import { useAuth } from "../../context/authContext";
 
@@ -13,6 +13,10 @@ import {
 const CreateBlog = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+const backPath = location.state?.from || "/user";
+const backLabel =
+  backPath === "/user/my-blogs" ? "My Blogs" : "Dashboard";
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -49,21 +53,21 @@ const CreateBlog = () => {
 
         <button
           type="button"
-          onClick={() => navigate("/user")}
-          className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-600 transition mb-5"
+          onClick={() => navigate(backPath)}
+          className="flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 transition mb-5"
         >
           <ArrowLeft size={17} />
-          Back to Dashboard
+          Back to {backLabel}
         </button>
 
         <div className="flex items-start gap-4">
 
-          <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
             <PenLine size={23} />
           </div>
 
           <div>
-            <p className="text-sm font-semibold tracking-wide text-slate-600 uppercase">
+            <p className="text-sm font-semibold tracking-wide text-indigo-600 uppercase">
               Blog Editor
             </p>
 
@@ -84,11 +88,11 @@ const CreateBlog = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
         {/* Card Header */}
-        <div className="bg-slate-50  px-6 sm:px-8 py-6">
+        <div className="bg-indigo-50 border-b border-indigo-100 px-6 sm:px-8 py-6">
 
           <div className="flex items-center gap-3">
 
-            <div className="w-10 h-10 rounded-lg bg-slate-800/70 text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-white text-indigo-600 border border-indigo-100 flex items-center justify-center">
               <FileText size={20} />
             </div>
 
@@ -121,7 +125,7 @@ const CreateBlog = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter your blog title..."
-              className="w-full text-xl sm:text-2xl font-semibold text-slate-800 placeholder:text-slate-300 border-b-2 border-slate-200 focus:border-slate-600 outline-none pb-4 transition"
+              className="w-full text-xl sm:text-2xl font-semibold text-slate-800 placeholder:text-slate-300 border-b-2 border-slate-200 focus:border-indigo-600 outline-none pb-4 transition"
               required
             />
 
@@ -137,9 +141,9 @@ const CreateBlog = () => {
 
             <label className="block cursor-pointer">
 
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-slate-400 hover:bg-slate-50/40 transition">
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-indigo-400 hover:bg-indigo-50/40 transition">
 
-                <div className="w-12 h-12 mx-auto rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center mb-3">
+                <div className="w-12 h-12 mx-auto rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
                   <Image size={23} />
                 </div>
 
@@ -181,7 +185,7 @@ const CreateBlog = () => {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Start writing your blog here..."
               rows={14}
-              className="w-full resize-none text-slate-700 leading-7 placeholder:text-slate-300 border border-slate-200 rounded-xl p-5 focus:border-slate-500 focus:ring-2 focus:ring-slate-100 outline-none transition"
+              className="w-full resize-none text-slate-700 leading-7 placeholder:text-slate-300 border border-slate-200 rounded-xl p-5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition"
               required
             />
 
@@ -193,7 +197,7 @@ const CreateBlog = () => {
 
             <button
               type="button"
-              onClick={() => navigate("/user")}
+              onClick={() => navigate(backPath)}
               className="px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition"
             >
               Cancel
@@ -201,7 +205,7 @@ const CreateBlog = () => {
 
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-slate-700 text-white font-semibold hover:bg-slate-800 shadow-sm transition"
+              className="flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 shadow-sm transition"
             >
               <PenLine size={18} />
               Publish Blog

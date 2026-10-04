@@ -33,7 +33,7 @@ const EditBlog = () => {
 
         if (!blog) {
           alert("Blog not found");
-          navigate("/my-blogs");
+          navigate("/user/my-blogs");
           return;
         }
 
@@ -84,7 +84,7 @@ const EditBlog = () => {
         <button
           type="button"
           onClick={() => navigate("/user/my-blogs")}
-          className="flex items-center gap-2 text-sm text-slate-500 hover:text-purple-600 transition mb-5"
+          className="flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 transition mb-5"
         >
           <ArrowLeft size={17} />
           Back to My Blogs
@@ -92,12 +92,12 @@ const EditBlog = () => {
 
         <div className="flex items-start gap-4">
 
-          <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
             <FileText size={23} />
           </div>
 
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-purple-600">
+            <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">
               Blog Editor
             </p>
 
@@ -119,11 +119,11 @@ const EditBlog = () => {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
         {/* Card Header */}
-        <div className="bg-purple-50 border-b border-purple-100 px-6 sm:px-8 py-6">
+        <div className="bg-indigo-50 border-b border-indigo-100 px-6 sm:px-8 py-6">
 
           <div className="flex items-center gap-3">
 
-            <div className="w-10 h-10 rounded-lg bg-white text-purple-600 flex items-center justify-center border border-purple-100">
+            <div className="w-10 h-10 rounded-lg bg-white text-indigo-600 flex items-center justify-center border border-indigo-100">
               <FileText size={20} />
             </div>
 
@@ -155,7 +155,7 @@ const EditBlog = () => {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition"
+              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition"
               required
             />
 
@@ -193,9 +193,9 @@ const EditBlog = () => {
 
             <label className="block cursor-pointer">
 
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-purple-400 hover:bg-purple-50/40 transition">
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-indigo-400 hover:bg-indigo-50/40 transition">
 
-                <div className="w-11 h-11 mx-auto rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+                <div className="w-11 h-11 mx-auto rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
                   <Image size={21} />
                 </div>
 
@@ -236,7 +236,7 @@ const EditBlog = () => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={12}
-              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-700 leading-7 outline-none resize-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition"
+              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-700 leading-7 outline-none resize-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition"
               required
             />
 
@@ -256,7 +256,7 @@ const EditBlog = () => {
 
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition shadow-sm"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition shadow-sm"
             >
               <Save size={18} />
               Update Blog

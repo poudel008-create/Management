@@ -48,7 +48,7 @@ const Navbar = ({ onMenuClick }) => {
 
         <div className="hidden sm:flex items-center gap-3">
 
-          <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
             {user?.name?.charAt(0).toUpperCase()}
           </div>
 
