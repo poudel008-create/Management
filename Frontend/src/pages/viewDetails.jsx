@@ -4,7 +4,7 @@ import { ArrowLeft, CalendarDays, Clock } from "lucide-react";
 
 import { getBlogById } from "../services/blogService";
 import { useAuth } from "../context/authContext";
-
+import MuxPlayer from "@mux/mux-player-react";
 const BlogDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,6 +14,7 @@ const BlogDetails = () => {
 
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showVideo, setShowVideo] = useState(false);
 
   // Came from inside the app -> go back there, otherwise the blogs list
   const goBack = () => navigate(location.state?.from || "/blogs");
@@ -23,6 +24,8 @@ const BlogDetails = () => {
       try {
         const data = await getBlogById(id, token);
         setBlog(data.blog);
+        console.log("BLOG DETAIL:", data.blog);
+        console.log("VIDEO:", data.blog.videoId);
       } catch (error) {
         console.log(error);
       } finally {
@@ -138,7 +141,7 @@ const BlogDetails = () => {
                 )}
               </div>
             )}
-{/* 
+            {/* 
             <div className="flex items-center gap-1.5 text-xs text-slate-500">
               <Clock size={14} />
               {readingTime} min read
@@ -149,19 +152,43 @@ const BlogDetails = () => {
         </div>
 
 
-        {/* Image */}
-        {blog.image && (
-          <div className="px-6 sm:px-10 mt-7">
-            <div className="aspect-2/1 rounded-xl overflow-hidden bg-slate-100">
-              <img
-                src={blog.image}
-                alt={blog.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        )}
+      {/* Cover Photo / Video */}
+{blog.image && (
+  <div className="px-6 sm:px-10 mt-7">
+    <div className="aspect-2/1 rounded-xl overflow-hidden bg-slate-100 relative">
 
+      {!showVideo ? (
+        <>
+          <img
+            src={blog.image}
+            alt={blog.title}
+            className="w-full h-full object-cover"
+          />
+
+          {blog.videoId?.playbackId && (
+            <button
+              onClick={() => setShowVideo(true)}
+              className="absolute inset-0 flex items-center justify-center bg-black/10 hover:bg-black/30 transition group"
+            >
+              <span className="w-16 h-16 rounded-full bg-white/90 group-hover:scale-110 transition flex items-center justify-center shadow-lg">
+                <span className="text-indigo-600 text-2xl ml-1">
+                  ▶
+                </span>
+              </span>
+            </button>
+          )}
+        </>
+      ) : (
+        <MuxPlayer
+          playbackId={blog.videoId.playbackId}
+          streamType="on-demand"
+          className="w-full h-full"
+        />
+      )}
+
+    </div>
+  </div>
+)}
 
         {/* Content */}
         <div className="px-6 sm:px-10 py-8 sm:py-10">

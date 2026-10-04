@@ -10,7 +10,7 @@ export const createBlog = async (
   res: Response
 ) => {
   try {
-    const { title, content } = req.body;
+    const { title, content,videoId } = req.body;
 
     let imageUrl = "";
 
@@ -44,6 +44,7 @@ export const createBlog = async (
       content,
       author: req.user.id,
       image: imageUrl,
+       videoId: videoId || undefined,
     });
 
     res.status(201).json({
@@ -67,9 +68,10 @@ export const getBlogs = async (
   res: Response
 ) => {
   try {
-    const blogs = await Blog.find()
-      .populate("author", "name email")
-      .sort({ createdAt: -1 });
+   const blogs = await Blog.find()
+  .populate("author", "name email")
+  .populate("videoId")
+  .sort({ createdAt: -1 });
 
     res.status(200).json({
       blogs,
@@ -87,8 +89,9 @@ export const getBlogById = async (
    res:Response
   ) => {
   try {
-    const blog = await Blog.findById(req.params.id)
-      .populate("author", "name email role");
+   const blog = await Blog.findById(req.params.id)
+  .populate("author", "name email role")
+  .populate("videoId");
 
     if (!blog) {
       return res.status(404).json({

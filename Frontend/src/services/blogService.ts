@@ -1,11 +1,11 @@
 import api from "./api";
 
-
 // CREATE BLOG
 export const createBlog = async (
   title: string,
   content: string,
   image: File | null,
+  videoId: string | null,
   token: string
 ) => {
   const formData = new FormData();
@@ -16,12 +16,21 @@ export const createBlog = async (
   if (image) {
     formData.append("image", image);
   }
+  
 
-  const response = await api.post("/blogs", formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  if (videoId) {
+    formData.append("videoId", videoId);
+  }
+
+  const response = await api.post(
+    "/blogs",
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response.data;
 };
@@ -46,6 +55,24 @@ export const getMyBlogs = async (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  return response.data;
+};
+
+
+// GET BLOG BY ID
+export const getBlogById = async (
+  id: string,
+  token: string
+) => {
+  const response = await api.get(
+    `/blogs/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response.data;
 };
@@ -88,21 +115,6 @@ export const deleteBlog = async (
   token: string
 ) => {
   const response = await api.delete(
-    `/blogs/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  return response.data;
-};
-
-export const getBlogById = async (
-  id:string,
-   token:string) => {
-  const response = await api.get(
     `/blogs/${id}`,
     {
       headers: {
