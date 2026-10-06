@@ -6,6 +6,7 @@ import cors from "cors";
 import connectDB from "./db.js";
 import authRoutes from "./Routes/userRoutes.js";
 import blogRoutes from "./Routes/blogRoutes.js";
+import notificationRoutes from "./Routes/notificationRoutes.js"
 import videoRoutes from "./Routes/videoRoutes.js"
 import seedAdmin from "./seedAdmin.js";
 
@@ -27,7 +28,8 @@ app.use("/api/auth", authRoutes);
 
 console.log("BLOG ROUTES FILE LOADED");
 app.use("/api/blogs", blogRoutes);
-app.use("/api/videos",videoRoutes)
+app.use("/api/videos",videoRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.get("/test", (req, res) => {
   console.log("SERVER TEST HIT");
 

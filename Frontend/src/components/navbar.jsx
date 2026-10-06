@@ -1,9 +1,39 @@
-import React from "react";
-import { Menu, Bell } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Menu } from "lucide-react";
 import { useAuth } from "../context/authContext";
+import { useLocation } from "react-router-dom";
+import { getUnreadCount } from "../services/notificationService";
+import NotificationDropdown from "../components/notificationDropdown";
 
 const Navbar = ({ onMenuClick }) => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
+  const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchCount = async () => {
+    if (!token) return;
+    try {
+      const data = await getUnreadCount(token);
+      setUnreadCount(data.unreadCount || 0);
+    } catch {
+      // silent
+    }
+  };
+
+  useEffect(() => {
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    return () => clearInterval(interval);
+  }, [token]);
+
+  // Re-fetch when route changes or a notifications:changed event fires
+  useEffect(() => { fetchCount(); }, [location.pathname]);
+
+  useEffect(() => {
+    const handler = () => fetchCount();
+    window.addEventListener("notifications:changed", handler);
+    return () => window.removeEventListener("notifications:changed", handler);
+  }, [token]);
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6">
@@ -42,9 +72,10 @@ const Navbar = ({ onMenuClick }) => {
       {/* Right */}
       <div className="flex items-center gap-4">
 
-        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-100">
-          <Bell size={20} />
-        </button>
+        <NotificationDropdown
+            unreadCount={unreadCount}
+            setUnreadCount={setUnreadCount}
+          />
 
         <div className="hidden sm:flex items-center gap-3">
 

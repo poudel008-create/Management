@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { getUploadUrl } from "../services/videoService";
 import { useAuth } from "../context/authContext";
+import toast from "react-hot-toast";
 
 const VideoUpload = () => {
   const { token } = useAuth();
@@ -13,7 +14,7 @@ const VideoUpload = () => {
     e.preventDefault();
 
     if (!title || !file) {
-      alert("Title and video are required");
+      toast.error("Title and video are required");
       return;
     }
 
@@ -29,13 +30,13 @@ const VideoUpload = () => {
         body: file,
       });
 
-      alert("Video uploaded successfully!");
+      toast.success("Video uploaded successfully!");
 
       setTitle("");
       setFile(null);
     } catch (error) {
       console.error(error);
-      alert("Video upload failed");
+      toast.error(error.response?.data?.message || "Video upload failed");
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyBlogs, deleteBlog } from "../../services/blogService";
 import { useAuth } from "../../context/authContext";
+import toast from "react-hot-toast";
+import ConfirmDialog from "../../components/confirmDialog";
 
 import {
   Plus,
@@ -11,6 +13,9 @@ import {
   FileText,
   ImageOff,
   CalendarDays,
+  Clock,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 
 const MyBlogs = () => {
@@ -19,6 +24,8 @@ const MyBlogs = () => {
 
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchMyBlogs = async () => {
@@ -43,25 +50,40 @@ const MyBlogs = () => {
     });
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this blog?"
-    );
-
-    if (!confirmDelete) return;
-
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
     try {
-      await deleteBlog(id, token);
-
-      setBlogs((prevBlogs) =>
-        prevBlogs.filter((blog) => blog._id !== id)
-      );
-
-      alert("Blog deleted successfully");
+      await deleteBlog(deleteId, token);
+      setBlogs((prev) => prev.filter((b) => b._id !== deleteId));
+      setDeleteId(null);
+      toast.success("Blog deleted");
     } catch (error) {
       console.log(error);
-      alert("Failed to delete blog");
+      toast.error(error.response?.data?.message || "Failed to delete blog");
+    } finally {
+      setDeleting(false);
     }
+  };
+
+  const statusBadge = (status) => {
+    if (status === "approved")
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-100">
+          <CheckCircle size={11} /> Approved
+        </span>
+      );
+    if (status === "rejected")
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-500 border border-red-100">
+          <XCircle size={11} /> Rejected
+        </span>
+      );
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-100">
+        <Clock size={11} /> Pending
+      </span>
+    );
   };
 
   if (loading) {
@@ -195,9 +217,20 @@ const MyBlogs = () => {
                   {blog.title}
                 </h2>
 
+                <div className="mt-1.5">{statusBadge(blog.status)}</div>
+
                 <p className="text-sm text-slate-500 mt-1.5 leading-5 line-clamp-2">
                   {blog.content}
                 </p>
+
+                {blog.status === "rejected" && blog.rejectionReason && (
+                  <div className="mt-2 px-3 py-2 rounded-lg bg-red-50 border border-red-100">
+                    <p className="text-xs text-red-600 leading-snug">
+                      <span className="font-semibold">Rejected: </span>
+                      {blog.rejectionReason}
+                    </p>
+                  </div>
+                )}
 
 
                 {/* Date + View details */}
@@ -239,7 +272,7 @@ const MyBlogs = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete(blog._id);
+                      setDeleteId(blog._id);
                     }}
                     className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition"
                   >
@@ -258,6 +291,15 @@ const MyBlogs = () => {
         </div>
 
       )}
+
+      <ConfirmDialog
+        open={!!deleteId}
+        title="Delete this blog?"
+        message="This will permanently remove the blog and its video. This cannot be undone."
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+      />
 
     </div>
   );

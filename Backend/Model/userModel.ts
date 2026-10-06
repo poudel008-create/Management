@@ -5,6 +5,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   role: "admin" | "student" | "teacher";
+  savedBlogs: mongoose.Types.ObjectId[];
 }
 
 const userSchema = new Schema<IUser>(
@@ -30,6 +31,13 @@ const userSchema = new Schema<IUser>(
       enum: ["admin", "student", "teacher"],
       default: "student",
     },
+
+    savedBlogs: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Blog",
+      },
+    ],
   },
   {
     timestamps: true,

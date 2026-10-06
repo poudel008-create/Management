@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { createBlog } from "../../services/blogService";
 import { getUploadUrl, checkVideoStatus } from "../../services/videoService";
 import { useAuth } from "../../context/authContext";
+import toast from "react-hot-toast";
 
 import {
   PenLine,
@@ -110,7 +111,7 @@ const CreateBlog = () => {
         token
       );
 
-      alert("Blog created successfully");
+      toast.success("Blog submitted for review");
 
       setTitle("");
       setContent("");
@@ -121,7 +122,7 @@ const CreateBlog = () => {
 
     } catch (error) {
       console.log(error);
-      alert("Failed to create blog");
+      toast.error(error.response?.data?.message || "Failed to publish blog");
     } finally {
       setLoading(false);
     }

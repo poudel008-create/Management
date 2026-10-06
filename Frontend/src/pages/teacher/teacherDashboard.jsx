@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
-import { getBlogs } from "../../services/blogService";
+import { getBlogs, getReviewBlogs } from "../../services/blogService";
 
 import {
   BookOpen,
@@ -10,6 +10,7 @@ import {
   ArrowRight,
   User,
   FileText,
+  ClipboardCheck,
 } from "lucide-react";
 
 const TeacherD = () => {
@@ -17,13 +18,18 @@ const TeacherD = () => {
   const { user, token } = useAuth();
 
   const [blogs, setBlogs] = useState([]);
+  const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const data = await getBlogs(token);
+        const [data, reviewData] = await Promise.all([
+          getBlogs(token),
+          getReviewBlogs("pending", token),
+        ]);
         setBlogs(data.blogs || []);
+        setPendingCount(reviewData.counts?.pending ?? reviewData.blogs?.length ?? 0);
       } catch (error) {
         console.log(error);
       } finally {
@@ -121,6 +127,26 @@ const TeacherD = () => {
               <Users size={24} />
             </div>
 
+          </div>
+        </div>
+
+
+        {/* Pending Review */}
+        <div
+          onClick={() => navigate("/review")}
+          className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-indigo-300 hover:shadow-md transition cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500">Pending Review</p>
+              <h2 className="text-3xl font-bold text-slate-800 mt-2">
+                {loading ? "—" : pendingCount}
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">Blogs awaiting approval</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <ClipboardCheck size={24} />
+            </div>
           </div>
         </div>
 

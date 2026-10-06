@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
-import { getBlogs } from "../services/blogService";
-import { useAuth } from "../context/authContext";
-import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { BookOpen, Trash2 } from "lucide-react";
 
-import { BookOpen, ArrowRight, ImageOff } from "lucide-react";
+import { getBlogs, deleteBlog } from "../services/blogService";
+import { useAuth } from "../context/authContext";
+import BlogCard from "../components/blogCard";
+import ConfirmDialog from "../components/confirmDialog";
 
 const Blogs = () => {
-  const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
+
+  const isAdmin = user?.role === "admin";
 
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Admin delete
+  const [toDelete, setToDelete] = useState(null);
+  const [reason, setReason] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -29,10 +37,38 @@ const Blogs = () => {
     fetchBlogs();
   }, [token]);
 
-  const openBlog = (id) => {
-    navigate(`/blogs/${id}`, {
-      state: { from: "/blogs" },
-    });
+  const askDelete = (blog) => {
+    setReason("");
+    setToDelete(blog);
+  };
+
+  const closeDialog = () => {
+    if (deleting) return;
+    setToDelete(null);
+    setReason("");
+  };
+
+  const confirmDelete = async () => {
+    if (!toDelete) return;
+
+    setDeleting(true);
+
+    try {
+      await deleteBlog(toDelete._id, token, reason.trim());
+
+      setBlogs((prev) => prev.filter((b) => b._id !== toDelete._id));
+
+      toast.success("Blog deleted");
+
+      setToDelete(null);
+      setReason("");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to delete blog"
+      );
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (loading) {
@@ -93,87 +129,58 @@ const Blogs = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 
           {blogs.map((blog) => (
-
-            <article
+            <BlogCard
               key={blog._id}
-              onClick={() => openBlog(blog._id)}
-              className="group bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md transition cursor-pointer flex flex-col"
-            >
-
-              {/* Image */}
-              <div className="h-40 bg-slate-100 overflow-hidden shrink-0">
-
-                {blog.image ? (
-
-                  <img
-                    src={blog.image}
-                    alt={blog.title}
-                    className="w-full h-full object-cover"
-                  />
-
-                ) : (
-
-                  <div className="h-full flex flex-col items-center justify-center text-slate-300">
-                    <ImageOff size={26} />
-                    <span className="text-xs mt-1.5">
-                      No image
-                    </span>
-                  </div>
-
-                )}
-
-              </div>
-
-
-              {/* Content */}
-              <div className="p-4 flex flex-col flex-1">
-
-                <h2 className="text-lg font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-indigo-600 transition">
-                  {blog.title}
-                </h2>
-
-                <p className="text-sm text-slate-500 mt-1.5 leading-5 line-clamp-2">
-                  {blog.content}
-                </p>
-
-
-                {/* Footer */}
-                <div className="flex items-center justify-between gap-3 mt-auto pt-4">
-
-                  <div className="flex items-center gap-2 min-w-0">
-
-                    <div className="w-7 h-7 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
-                      {blog.author?.name
-                        ?.charAt(0)
-                        .toUpperCase() || "U"}
-                    </div>
-
-                    <p className="text-xs font-medium text-slate-600 truncate">
-                      {blog.author?.name || "Unknown Author"}
-                    </p>
-
-                  </div>
-
-
-                  <span className="flex items-center gap-1 text-xs font-semibold text-indigo-600 shrink-0">
-                    View details
-                    <ArrowRight
-                      size={14}
-                      className="group-hover:translate-x-0.5 transition"
-                    />
-                  </span>
-
-                </div>
-
-              </div>
-
-            </article>
-
+              blog={blog}
+              from="/blogs"
+              action={
+                isAdmin ? (
+                  <button
+                    onClick={() => askDelete(blog)}
+                    className="w-8 h-8 rounded-full bg-white/90 text-slate-500 shadow flex items-center justify-center hover:bg-white hover:text-red-600 transition"
+                    aria-label="Delete blog"
+                    title="Delete blog"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                ) : null
+              }
+            />
           ))}
 
         </div>
 
       )}
+
+
+      {/* Admin delete dialog */}
+      <ConfirmDialog
+        open={!!toDelete}
+        title="Delete this blog?"
+        message="This permanently removes the blog and its video, and the author will be notified."
+        confirmText="Delete"
+        loading={deleting}
+        onConfirm={confirmDelete}
+        onCancel={closeDialog}
+      >
+        <div className="mt-4 text-left">
+          <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+            Reason (optional, shown to the author)
+          </label>
+
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value.slice(0, 200))}
+            rows={3}
+            placeholder="Why is this blog being removed?"
+            className="w-full resize-none rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition"
+          />
+
+          <p className="text-right text-[11px] text-slate-400 mt-1">
+            {reason.length}/200
+          </p>
+        </div>
+      </ConfirmDialog>
 
     </div>
   );

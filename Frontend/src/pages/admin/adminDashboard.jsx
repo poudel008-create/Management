@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { getAllUsers } from "../../services/authService";
-import { getBlogs } from "../../services/blogService";
+import { getBlogs, getReviewBlogs } from "../../services/blogService";
 
 import {
   Users,
@@ -11,6 +11,7 @@ import {
   BookOpen,
   ArrowRight,
   FileText,
+  ClipboardCheck,
 } from "lucide-react";
 
 const StatCard = ({ title, value, hint, icon: Icon }) => (
@@ -47,18 +48,21 @@ const AdminD = () => {
 
   const [users, setUsers] = useState([]);
   const [blogs, setBlogs] = useState([]);
+  const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userData, blogData] = await Promise.all([
+        const [userData, blogData, reviewData] = await Promise.all([
           getAllUsers(token),
           getBlogs(token),
+          getReviewBlogs("pending", token),
         ]);
 
         setUsers(userData.users || []);
         setBlogs(blogData.blogs || []);
+        setPendingCount(reviewData.counts?.pending ?? reviewData.blogs?.length ?? 0);
       } catch (error) {
         console.log(error);
       } finally {
@@ -160,6 +164,22 @@ const AdminD = () => {
           hint="Published so far"
           icon={BookOpen}
         />
+
+        <div
+          onClick={() => navigate("/review")}
+          className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-indigo-300 hover:shadow-md transition cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500">Pending Review</p>
+              <h2 className="text-3xl font-bold text-slate-800 mt-2">{show(pendingCount)}</h2>
+              <p className="text-xs text-slate-400 mt-1">Blogs awaiting approval</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <ClipboardCheck size={23} />
+            </div>
+          </div>
+        </div>
 
       </div>
 

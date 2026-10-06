@@ -230,7 +230,7 @@ const ProfileEditor = ({
               {user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
 
-            <h2 className="text-xl font-bold text-slate-800 mt-4 break-words">
+            <h2 className="text-xl font-bold text-slate-800 mt-4 wrap-break-words">
               {user?.name}
             </h2>
 

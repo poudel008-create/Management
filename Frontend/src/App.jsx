@@ -16,6 +16,10 @@ import EditBlog from "./pages/student/editBlog";
 import StudentProfile from "./pages/student/studentProfile";
 import Blogs from "./pages/blogs";
 import BlogDetails from "./pages/viewDetails";
+import LikedBlogs from "./pages/likedBlogs";
+import SavedBlogs from "./pages/savedBlogs";
+import Notifications from "./pages/notifications";
+import ReviewQueue from "./pages/reviewQueue";
 import UsersDetails from "./pages/admin/usersDetails";
 import ManageRoles from "./pages/admin/manageRoles";
 import TeacherProfile from "./pages/teacher/teacherProfile";
@@ -104,6 +108,51 @@ const App = () => {
                 roles={["admin", "teacher", "student"]}
               >
                 <Blogs />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute roles={["admin", "teacher", "student"]}>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/review"
+            element={
+              <ProtectedRoute roles={["admin", "teacher"]}>
+                <ReviewQueue />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/blogs/liked"
+            element={
+              <ProtectedRoute roles={["admin", "teacher", "student"]}>
+                <LikedBlogs />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/blogs/saved"
+            element={
+              <ProtectedRoute roles={["admin", "teacher", "student"]}>
+                <SavedBlogs />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/blogs/my"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <MyBlogs />
               </ProtectedRoute>
             }
           />

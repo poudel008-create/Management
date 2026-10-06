@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 
 import {
@@ -13,13 +13,33 @@ import {
   User,
   LogOut,
   X,
+  ChevronDown,
+  Heart,
+  Bookmark,
+  ClipboardCheck,
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
 
   const role = user?.role;
+
+  const blogsChildPaths = ["/blogs", "/blogs/liked", "/blogs/saved", "/blogs/my"];
+  const isBlogsActive =
+    location.pathname === "/blogs" ||
+    (location.pathname.startsWith("/blogs/") &&
+      !["/blogs/liked", "/blogs/saved", "/blogs/my"].includes(location.pathname) === false
+        ? false
+        : blogsChildPaths.some((p) => location.pathname === p));
+
+  const isBlogsGroupActive =
+    blogsChildPaths.some((p) => location.pathname === p) ||
+    (location.pathname.startsWith("/blogs/") &&
+      !["/blogs/liked", "/blogs/saved", "/blogs/my"].includes(location.pathname));
+
+  const [blogsOpen, setBlogsOpen] = useState(false);
 
   const menuItems = {
     admin: [
@@ -39,11 +59,11 @@ const Sidebar = ({ isOpen, onClose }) => {
         icon: UserCog,
       },
       {
-        name: "Blogs",
-        path: "/blogs",
-        icon: BookOpen,
+        name: "Review Queue",
+        path: "/review",
+        icon: ClipboardCheck,
       },
-            {
+      {
         name: "Profile",
         path: "/admin/profile",
         icon: User,
@@ -62,9 +82,9 @@ const Sidebar = ({ isOpen, onClose }) => {
         icon: GraduationCap,
       },
       {
-        name: "Blogs",
-        path: "/blogs",
-        icon: BookOpen,
+        name: "Review Queue",
+        path: "/review",
+        icon: ClipboardCheck,
       },
       {
         name: "Profile",
@@ -83,16 +103,6 @@ const Sidebar = ({ isOpen, onClose }) => {
         name: "Create Blog",
         path: "/user/create-blog",
         icon: PenLine,
-      },
-      {
-        name: "My Blogs",
-        path: "/user/my-blogs",
-        icon: FileText,
-      },
-      {
-        name: "All Blogs",
-        path: "/blogs",
-        icon: BookOpen,
       },
       {
         name: "Profile",
@@ -176,29 +186,91 @@ const Sidebar = ({ isOpen, onClose }) => {
 
         {/* Menu */}
 
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
           {items.map((item) => {
-
             const Icon = item.icon;
-
+            const isActive = location.pathname === item.path;
             return (
               <button
                 key={item.name}
                 onClick={() => handleNavigation(item.path)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                  isActive
+                    ? "bg-indigo-500/25 text-white"
+                    : "text-slate-400 hover:bg-white/5 hover:text-white"
+                }`}
               >
-
                 <Icon size={19} />
-
-                <span>
-                  {item.name}
-                </span>
-
+                <span>{item.name}</span>
               </button>
             );
-
           })}
+
+          {/* Blogs Dropdown */}
+          <div>
+            <button
+              onClick={() => setBlogsOpen((prev) => !prev)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                isBlogsGroupActive
+                  ? "text-white"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              <BookOpen size={19} />
+              <span className="flex-1 text-left">Blogs</span>
+              <ChevronDown
+                size={15}
+                className={`transition-transform duration-200 ${
+                  blogsOpen || isBlogsGroupActive ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {(blogsOpen || isBlogsGroupActive) && (
+              <div className="ml-4 mt-1 space-y-1">
+
+                {([
+                  { path: "/blogs", label: "All Blogs", icon: BookOpen,
+                    isActive: location.pathname === "/blogs" ||
+                      (location.pathname.startsWith("/blogs/") &&
+                        !["/blogs/liked", "/blogs/saved", "/blogs/my"].includes(location.pathname)) },
+                  { path: "/blogs/liked", label: "Liked Blogs", icon: Heart,
+                    isActive: location.pathname === "/blogs/liked" },
+                  { path: "/blogs/saved", label: "Saved Blogs", icon: Bookmark,
+                    isActive: location.pathname === "/blogs/saved" },
+                ]).map(({ path, label, icon: Icon, isActive }) => (
+                  <button
+                    key={path}
+                    onClick={() => handleNavigation(path)}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition text-sm ${
+                      isActive
+                        ? "bg-indigo-500/25 text-white"
+                        : "text-slate-400 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    <Icon size={16} />
+                    <span>{label}</span>
+                  </button>
+                ))}
+
+                {role === "student" && (
+                  <button
+                    onClick={() => handleNavigation("/blogs/my")}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition text-sm ${
+                      location.pathname === "/blogs/my"
+                        ? "bg-indigo-500/15 text-indigo-300"
+                        : "text-slate-400 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    <FileText size={16} />
+                    <span>My Blogs</span>
+                  </button>
+                )}
+
+              </div>
+            )}
+          </div>
 
         </nav>
 

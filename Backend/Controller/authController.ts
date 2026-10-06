@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../Model/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import Notification from "../Model/notificationModel.js";
 
 
 export const registerUser = async (
@@ -36,6 +37,22 @@ export const registerUser = async (
         role: user.role,
       },
     });
+
+    // Notify all admins about the new registration
+    try {
+      const admins = await User.find({ role: "admin" }, "_id");
+      if (admins.length > 0) {
+        await Notification.insertMany(
+          admins.map((a) => ({
+            recipient: a._id,
+            sender: user._id,
+            type: "new_user",
+          }))
+        );
+      }
+    } catch (notifErr) {
+      console.log("NEW_USER NOTIFICATION ERROR:", notifErr);
+    }
   } catch (error) {
     res.status(500).json({
       message: "Registration failed",

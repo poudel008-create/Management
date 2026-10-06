@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getMyBlogs, updateBlog } from "../../services/blogService";
+import { getUploadUrl, checkVideoStatus } from "../../services/videoService";
 import { useAuth } from "../../context/authContext";
+import MuxPlayer from "@mux/mux-player-react";
+import toast from "react-hot-toast";
 
 import {
   ArrowLeft,
   FileText,
   Image,
   Save,
+  Video,
 } from "lucide-react";
 
 const EditBlog = () => {
@@ -19,6 +23,10 @@ const EditBlog = () => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [oldImage, setOldImage] = useState("");
+  const [existingVideo, setExistingVideo] = useState(null);
+  const [newVideo, setNewVideo] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [blogStatus, setBlogStatus] = useState("");
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -32,7 +40,7 @@ const EditBlog = () => {
         );
 
         if (!blog) {
-          alert("Blog not found");
+          toast.error("Blog not found");
           navigate("/user/my-blogs");
           return;
         }
@@ -40,6 +48,8 @@ const EditBlog = () => {
         setTitle(blog.title);
         setContent(blog.content);
         setOldImage(blog.image || "");
+        setExistingVideo(blog.videoId || null);
+        setBlogStatus(blog.status || "");
 
       } catch (error) {
         console.log(error);
@@ -52,25 +62,51 @@ const EditBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!token || !id) return;
 
     try {
-      await updateBlog(
-        id,
-        title,
-        content,
-        image,
-        token
+      setLoading(true);
+
+      let videoId = null;
+
+      if (newVideo) {
+        const uploadData = await getUploadUrl(title, token);
+
+        const uploadResponse = await fetch(uploadData.uploadUrl, {
+          method: "PUT",
+          body: newVideo,
+        });
+
+        if (!uploadResponse.ok) throw new Error("Video upload failed");
+
+        const uploadId = uploadData.uploadId;
+        videoId = uploadData.videoId;
+
+        let videoReady = false;
+        for (let i = 0; i < 60; i++) {
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          const statusData = await checkVideoStatus(uploadId, token);
+          if (statusData.status === "ready") { videoReady = true; break; }
+          if (statusData.status === "errored") throw new Error("Mux video processing failed");
+        }
+
+        if (!videoReady) throw new Error("Video processing took too long");
+      }
+
+      await updateBlog(id, title, content, image, token, videoId);
+
+      toast.success(
+        blogStatus === "rejected"
+          ? "Blog updated and sent for review again"
+          : "Blog updated successfully"
       );
-
-      alert("Blog updated successfully");
-
       navigate("/user/my-blogs");
 
     } catch (error) {
       console.log(error);
-      alert("Failed to update blog");
+      toast.error(error.response?.data?.message || "Failed to update blog");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -225,6 +261,57 @@ const EditBlog = () => {
           </div>
 
 
+          {/* Existing Video */}
+          {existingVideo?.playbackId && (
+            <div className="mb-7">
+              <p className="text-sm font-semibold text-slate-700 mb-3">
+                Current Video
+              </p>
+              <div className="rounded-xl overflow-hidden border border-slate-200">
+                <MuxPlayer
+                  playbackId={existingVideo.playbackId}
+                  streamType="on-demand"
+                  className="w-full"
+                />
+              </div>
+            </div>
+          )}
+
+
+          {/* Replace Video */}
+          <div className="mb-7">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
+              {existingVideo?.playbackId ? "Replace Video" : "Add Video"}
+            </label>
+
+            <label className="block cursor-pointer">
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-indigo-400 hover:bg-indigo-50/40 transition">
+                <div className="w-11 h-11 mx-auto rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+                  <Video size={21} />
+                </div>
+                <p className="font-medium text-slate-700">
+                  {newVideo ? newVideo.name : "Click to choose a new video"}
+                </p>
+                <p className="text-sm text-slate-400 mt-1">
+                  MP4, MOV or WebM
+                </p>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => setNewVideo(e.target.files?.[0] || null)}
+                  className="hidden"
+                />
+              </div>
+            </label>
+
+            {existingVideo?.playbackId && !newVideo && (
+              <p className="text-xs text-slate-400 mt-2">
+                Leave empty to keep the existing video.
+              </p>
+            )}
+          </div>
+
+
           {/* Content */}
           <div className="mb-8">
 
@@ -256,10 +343,11 @@ const EditBlog = () => {
 
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition shadow-sm"
+              disabled={loading}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition shadow-sm disabled:opacity-50"
             >
               <Save size={18} />
-              Update Blog
+              {loading ? "Saving..." : "Update Blog"}
             </button>
 
           </div>
